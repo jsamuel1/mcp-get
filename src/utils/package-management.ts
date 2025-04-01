@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { Package } from '../types/package.js';
+import fs from 'fs';import { Package } from '../types/package.js';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import { packageHelpers } from '../helpers/index.js';
@@ -229,6 +229,12 @@ export async function installPackage(pkg: Package): Promise<void> {
     
     await ConfigManager.installPackage(pkg, envVars);
     console.log('Updated Claude desktop configuration');
+
+    // Check if Amazon Q config exists and was updated
+    const amazonQConfigPath = ConfigManager.getAmazonQConfigPath();
+    if (fs.existsSync(amazonQConfigPath)) {
+      console.log('Updated Amazon Q MCP configuration');
+    };
 
     // Check analytics consent and track if allowed
     const analyticsAllowed = await checkAnalyticsConsent();
